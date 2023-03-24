@@ -2,6 +2,7 @@
 
 this repository record all of material/note during learning bert
 
+
 ## Bert stands in the shoulder of giants 
 - ULM-Fit (January)
 - ELMo (February)
@@ -22,5 +23,6 @@ ULM-Fit stands for [*Universal Language Model Fine-tuning*](https://arxiv.org/pd
 
 #### GPT
 GPT stands for *Generative Pre-trained Transformer* (a decoder component of transformer)
+
 ### reference
 [web blog](https://neptune.ai/blog/how-to-code-bert-using-pytorch-tutorial)
