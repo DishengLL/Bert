@@ -12,11 +12,12 @@ class BertPreprocess():
 
 
     def CleanAndGetWordList(self, stringList:list)->list:
-        sentences = re.sub("[.,!?-]", '', stringList.lower()).split('n')  # filter '.', ',', '?', '!'
+        sentences = re.sub("[.,!?-]", '', stringList.lower()).split('\n')  # filter '.', ',', '?', '!'
         word_list = list(set(" ".join(sentences).split()))
         # print(word_list)
         return word_list, sentences
-
+    def GetTokenList(self, sentence:str)->list:
+        return list(sentence.split())
     def BuildWordIndexDict(self)->dict:
         word_dict = {'[PAD]': 0, '[CLS]': 1, '[SEP]': 2, '[MASK]': 3}
         for i, w in enumerate(self.wordList):
@@ -27,7 +28,7 @@ class BertPreprocess():
             # print(vocab_size)
         return (word_dict, number_dict, vocab_size)
 
-    def make_batch(self, token_list:list):
+    def make_batch(self):
        batch = []
        batch_size = 10000
        positive = negative = 0
@@ -36,7 +37,7 @@ class BertPreprocess():
        while positive != batch_size/2 or negative != batch_size/2:
            tokens_a_index, tokens_b_index= randrange(len(self.sentences)), randrange(len(self.sentences))
 
-           tokens_a, tokens_b= self.word_list[tokens_a_index], self.word_list[tokens_b_index]
+           tokens_a, tokens_b= self.GetTokenList(sentences[tokens_a_index]), self.GetTokenList(sentences[tokens_b_index])
 
            input_ids = [self.wordDict['[CLS]']] + tokens_a + [self.wordDict['[SEP]']] + tokens_b + [self.wordDict['[SEP]']]
            segment_ids = [0] * (1 + len(tokens_a) + 1) + [1] * (len(tokens_b) + 1)
@@ -50,14 +51,19 @@ class BertPreprocess():
            for pos in cand_maked_pos[:n_pred]:
                masked_pos.append(pos)
                masked_tokens.append(input_ids[pos])
-               if random() < 0.8:  # 80%
+               if random.random() < 0.8:  # 80%
                    input_ids[pos] = self.wordDict['[MASK]'] # make mask
-               elif random() < 0.5:  # 10%
+                   print("mask: ",  input_ids[pos])
+               elif random.random() < 0.5:  # 10%
                    index = randint(0, self.vocabSize - 1) # random index in vocabulary
-                   input_ids[pos] = self.wordDic[self.numberDict[index]] # replace
+                   print("replace: ", input_ids[pos], " WITH ", self.numberDict[index], " ",
+                         self.wordDict[self.numberDict[index]])
+                   input_ids[pos] = self.wordDict[self.numberDict[index]] # replace
+
 
            # Zero Paddings
            n_pad = maxlen - len(input_ids)
+
            input_ids.extend([0] * n_pad)
            segment_ids.extend([0] * n_pad)
 
@@ -73,6 +79,7 @@ class BertPreprocess():
            elif tokens_a_index + 1 != tokens_b_index and negative < batch_size/2:
                batch.append([input_ids, segment_ids, masked_tokens, masked_pos, False]) # NotNext
                negative += 1
+           break
        return batch
 
 
@@ -80,11 +87,18 @@ class BertPreprocess():
 
 if __name__ == "__main__":
     text = (
-        'Hello, how are you? I am Romeo.n'
-        'Hello, Romeo My name is Juliet. Nice to meet you.n'
-        'Nice meet you too. How are you today?n'
-        'Great. My baseball team won the competition.n'
-        'Oh Congratulations, Julietn'
+        'Hello, how are you? I am Romeo.\n'
+        'Hello, Romeo My name is Juliet. Nice to meet you.\n'
+        'Nice meet you too. How are you today?\n'
+        'Great. My baseball team won the competition.\n'
+        'Oh Congratulations, Juliet\n'
         'Thanks you Romeo'
     )
     a = BertPreprocess(text)
+    word_list, sentences = a.CleanAndGetWordList(text)
+    print(word_list)
+    print(sentences)
+    print(a.wordDict)
+    for i in a.make_batch()[:1]:
+        for j in i :
+            print(j)
