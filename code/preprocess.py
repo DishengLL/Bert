@@ -5,6 +5,7 @@ from random import shuffle
 import random
 import Utils
 
+
 class BertPreprocess():
     def __init__(self, inputCorpusList):
         self.wordList , self.sentences= self.CleanAndGetWordList(inputCorpusList)
@@ -13,6 +14,7 @@ class BertPreprocess():
 
 
     def CleanAndGetWordList(self, stringList:list)->list:
+
         sentences = re.sub("[.,!?-]", '', stringList.lower()).split('\n')  # filter '.', ',', '?', '!'
         word_list = list(set(" ".join(sentences).split()))
         # print(word_list)
@@ -37,6 +39,7 @@ class BertPreprocess():
        maxlen = max([len(i.split()) for i in self.sentences])
        while positive != batch_size/2 or negative != batch_size/2:
            tokens_a_index, tokens_b_index= randrange(len(self.sentences)), randrange(len(self.sentences))
+
 
            tokens_a, tokens_b= self.GetTokenList(sentences[tokens_a_index]), self.GetTokenList(sentences[tokens_b_index])
 
@@ -80,7 +83,9 @@ class BertPreprocess():
            elif tokens_a_index + 1 != tokens_b_index and negative < batch_size/2:
                batch.append([input_ids, segment_ids, masked_tokens, masked_pos, False]) # NotNext
                negative += 1
+
            break
+
        return batch
 
 
