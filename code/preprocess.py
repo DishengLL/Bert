@@ -3,6 +3,7 @@ from random import randrange
 from random import randint
 from random import shuffle
 import random
+import Utils
 
 class BertPreprocess():
     def __init__(self, inputCorpusList):
@@ -53,7 +54,7 @@ class BertPreprocess():
                masked_tokens.append(input_ids[pos])
                if random.random() < 0.8:  # 80%
                    input_ids[pos] = self.wordDict['[MASK]'] # make mask
-                   print("mask: ",  input_ids[pos])
+                   # print("mask: ",  input_ids[pos])
                elif random.random() < 0.5:  # 10%
                    index = randint(0, self.vocabSize - 1) # random index in vocabulary
                    print("replace: ", input_ids[pos], " WITH ", self.numberDict[index], " ",
@@ -96,9 +97,9 @@ if __name__ == "__main__":
     )
     a = BertPreprocess(text)
     word_list, sentences = a.CleanAndGetWordList(text)
-    print(word_list)
-    print(sentences)
-    print(a.wordDict)
-    for i in a.make_batch()[:1]:
-        for j in i :
-            print(j)
+    # print(word_list)
+    # print(sentences)
+    # print(a.wordDict)
+    batchZero = a.make_batch()[0]     # batchZero = [input_ids, segment_ids, masked_tokens, masked_pos, doesFollow]
+    Utils.print_list(batchZero)
+
