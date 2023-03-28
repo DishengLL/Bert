@@ -3,6 +3,7 @@ from random import randrange
 from random import randint
 from random import shuffle
 import random
+import torch
 import Utils
 
 class BertPreprocess():
@@ -10,6 +11,7 @@ class BertPreprocess():
         self.wordList , self.sentences= self.CleanAndGetWordList(inputCorpusList)
 
         self.wordDict, self.numberDict, self.vocabSize= self.BuildWordIndexDict()
+
 
 
     def CleanAndGetWordList(self, stringList:list)->list:
