@@ -6,7 +6,7 @@ import random
 
 class BertPreprocess():
     def __init__(self, inputCorpusList):
-        self.wordList , self.sentences= self.CleanAndGetWordList(inputCorpusList)
+        self.wordList, self.sentences= self.CleanAndGetWordList(inputCorpusList)
 
         self.wordDict, self.numberDict, self.vocabSize= self.BuildWordIndexDict()
 
